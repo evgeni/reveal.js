@@ -14,7 +14,8 @@ section div {
 .reveal {
   background: url(https://github.com/theforeman/foreman-graphics/raw/master/logo/foreman_large.png);
   background-repeat: no-repeat;
-  background-position: 100px 100px; }
+  background-position: 20pt 20pt;
+  background-size: 20%; }
 
 /*********************************************
  * GLOBAL STYLES

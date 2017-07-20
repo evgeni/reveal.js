@@ -1,0 +1,59 @@
+/**
+ * White theme for reveal.js. This is the opposite of the 'black' theme.
+ *
+ * By Hakim El Hattab, http://hakim.se
+ */
+
+
+// Default mixins and settings -----------------
+@import "../template/mixins";
+@import "../template/settings";
+// ---------------------------------------------
+
+
+// Include theme-specific fonts
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,700);
+
+
+// Override theme settings (see ../template/settings.scss)
+$backgroundColor: #fff;
+
+$mainColor: #222;
+$headingColor: #222;
+
+$mainFontSize: 42px;
+$mainFont: 'Open Sans', sans-serif;
+$headingFont: 'Open Sans', sans-serif;
+$headingTextShadow: none;
+$headingLetterSpacing: normal;
+$headingTextTransform: uppercase;
+$headingFontWeight: 600;
+$linkColor: #025D8C;
+$linkColorHover: lighten( $linkColor, 15% );
+$selectionBackgroundColor: lighten( $linkColor, 25% );
+
+$heading1Size: 2.0em;
+$heading2Size: 1.6em;
+$heading3Size: 1.3em;
+$heading4Size: 1.0em;
+
+section.has-dark-background {
+	&, h1, h2, h3, h4, h5, h6 {
+		color: #fff;
+	}
+}
+
+section div {
+	color: #fff;
+	background-color: #025D8C;
+}
+
+.reveal {
+	background: url(https://github.com/theforeman/foreman-graphics/raw/master/logo/foreman_large.png);
+	background-repeat: no-repeat;
+	background-position: 100px 100px;
+}
+
+// Theme template ------------------------------
+@import "../template/theme";
+// ---------------------------------------------

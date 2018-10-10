@@ -124,7 +124,7 @@ Debian and Grml Developer
 
 ## Katello example
 
-<img src="https://people.redhat.com/egolov/images/katello.png" alt="katello" style="width: 60%; border: 0; box-shadow: none;">
+<img src="https://people.redhat.com/egolov/images/katello.png" alt="katello" style="width: 50%; border: 0; box-shadow: none;">
 
 ---
 
@@ -170,7 +170,7 @@ Debian and Grml Developer
 
 ---
 
-## test workflow - package building
+## package building
 
 On every change to the source, the following steps are executed:
 * a new source tarball is generated
@@ -179,7 +179,7 @@ On every change to the source, the following steps are executed:
 
 ---
 
-## test workflow - package testing
+## package testing
 
 Jenkins runs a daily pipeline which:
 * Synchronizes the packages from Koji into Katello (*Library*)
@@ -191,7 +191,7 @@ Jenkins runs a daily pipeline which:
 
 ---
 
-## test workflow - further testing and releasing
+## further testing and releasing
 
 * The tests executed in the VM ensure that the software is not DOA (they take ~1h)
 * Once a week the content from *Test* is promoted to *QA*

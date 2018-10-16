@@ -166,7 +166,7 @@ Debian and Grml Developer
 * Katello also syncs external packages (RHEL, RHSCL)
 * Jenkins creates/updates ContentView (RHEL, RHSCL, Packages from Koji)
 * Jenkins tests the content in *Library* by installing the software and running end-to-end tests
-* Jenkins promotes ContentView to *QA*
+* Jenkins promotes ContentView to *Test* and *QA*
 
 ---
 
@@ -214,7 +214,7 @@ Jenkins runs a daily pipeline which:
 * Once a week content from *Test* is promoted to *QA*
 * This triggers a large test-suite (>24h!)
 * Plus manual verification of features and fixed bugs that have no automated tests
-* After succesful verification, the software is released
+* After successful verification, the software is released
 
 ---
 

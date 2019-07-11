@@ -23,6 +23,7 @@ Debian and Grml Developer
 * Motivation / WTF
 * Warum nicht `X`?!
 * Foreman Ansible Modules
+* Workflow Beispiele
 * Selber Module schreiben!
 
 ---
@@ -42,7 +43,7 @@ Debian and Grml Developer
 
 ## Was ist Katello?
 
-* Plugin fuer Foreman
+* Plugin für Foreman
 * Content Management (RPM, DEB, Puppet, Containers, Files)
 * Content kann grupiert und gefiltert an Clients ausgeliefert werden
 * Erlaubt Snapshots von Content zur Versionierung
@@ -53,9 +54,9 @@ Debian and Grml Developer
 ## Was ist Ansible?
 
 * "radically simple IT automation engine"
-* bringt eine enorme Zahl an Modulen fuer unterschiedliche Einsatzzwecke mit
+* bringt eine enorme Zahl an Modulen für unterschiedliche Einsatzzwecke mit
 * kann leicht durch eigene Module erweitert werden
-* laesst sich gut mit REST APIs integrieren
+* lässt sich gut mit REST APIs integrieren
 
 ---
 
@@ -68,7 +69,7 @@ Debian and Grml Developer
 * Daten lesbar speichern und versionieren
 
 Note:
-PR ist einfacher als in der UI runklicken
+* PR ist einfacher als in der UI rumklicken
 
 ---
 
@@ -117,7 +118,9 @@ PR ist einfacher als in der UI runklicken
 * Benutzt die `nailgun` Bibliothek
 
 Note:
-Nailgun ist eigentlich fuer Satellite geschrieben, versions spezifisch und hat Probleme mit non-Katello Installationen
+* `nailgun` ist eigentlich für Satellite geschrieben
+* ersions spezifisch
+* hat Probleme mit non-Katello Installationen
 
 ---
 
@@ -149,15 +152,19 @@ Nailgun ist eigentlich fuer Satellite geschrieben, versions spezifisch und hat P
       releasever: 7Server
 ```
 
+Note:
+* Man muss sich `entity` merken
+* Die Module sind schwierig zu dokumentieren
+
 ---
 
 ## `ansible-foreman-modules`
 
 * Seit 2015 gibt es auch [`ansible-foreman-modules`](https://github.com/Nosmoht/ansible-module-foreman) von Thomas Krahn ([@Nosmoht](https://github.com/Nosmoht))
-* Gut geplegt
+* Gut gepflegt
 * Benutzt eine eigene Bibliothek um mit der API zu sprechen
   * Benutzt nicht Foremans `apidoc.json`
-  * Braucht Anpassungen fuer Plugins
+  * Braucht Anpassungen für Plugins
 * Aktuell kein Katello Support
 
 ---
@@ -169,8 +176,8 @@ Nailgun ist eigentlich fuer Satellite geschrieben, versions spezifisch und hat P
 ## Foreman Ansible Modules
 
 * Seit Juni 2017
-* Versucht `foreman`/`katello` aufzuraeumen
-* Zunaechst durch Aufsplittung in einzelne Module pro Objekt
+* Versucht `foreman`/`katello` aufzuräumen
+* Zunächst durch Aufsplittung in einzelne Module pro Objekt
 * Dann durch Aufbau eines Frameworks um Module schlank zu halten
 * Tests!
 
@@ -181,9 +188,9 @@ Nailgun ist eigentlich fuer Satellite geschrieben, versions spezifisch und hat P
 * Die Nutzung von `nailgun` wurde irgendwann anstrengend
   * Welche Version von `nailgun`?
   * Was ist mit Plugins?
-* `apypie` Bibliothek als Ersatz fuer `nailgun`
+  * Funktioniert nicht ohne Katello
+* `apypie` Bibliothek als Ersatz für `nailgun`
   * Liest die `apidoc.json` von Foreman
-  * alle Plugins!
 * Durch existierendes Framework und Tests ist die Migration einfach
 
 ---
@@ -218,7 +225,107 @@ Nailgun ist eigentlich fuer Satellite geschrieben, versions spezifisch und hat P
 
 ---
 
+## Foreman Ansible Modules - Stats
+
+* 41 <span class="emoji">🌟</span> auf GitHub
+* 23 Contributors (7 Red Hat, 7 ATIX)
+* 7 neue Contributors in 2019
+
+---
+
+![new-contributors](https://people.redhat.com/egolov/fam/fam-new-contributors.png =80%x80%)
+
+Note:
+* almost no new contributors in 2018 (well, 5, but…)
+* none in between February and September
+* Patrick (in September) is a one-time contributor so far
+
+---
+
+![PR activity](https://people.redhat.com/egolov/fam/fam-pr-activity.png =80%x80%)
+
+Note:
+* we made Module writing easy in January/February 2019
+* before that we had 7.74 PRs on average per month
+* after it's 12.33 PRs!
+
+---
+
+## Foreman Ansible Modules - Outlook
+
+* Bald auf Ansible Galaxy
+* Bald als RPM auf yum.theforeman.org
+* Beide Wege werden Ansible 2.8 benötigen (Ansible Collections)
+* Module weiterhin Ansible 2.3+ kompatibel
+
+---
+
+# Workflow Beispiele
+
+* FIXME: Katello sync+publish+promote
+* FIXME: Katello LCE+CV+AK
+
+---
+
 # Selber Module schreiben!
+
+---
+
+## Modul Aufbau
+
+Die meisten Module sind dazu da Objekte in Foreman zu verwalten
+
+1. Bereits vorhandenes Objekt suchen
+2. Objekt mit den vom User gegebenen Daten vergleichen
+3. Objekt speichern
+
+Dafür gibt es ein Framework…
+
+---
+
+Wir haben einen Wrapper um `AnsibleModule`:
+
+```python
+from ansible.module_utils.foreman_helper import
+  ForemanEntityApypieAnsibleModule
+
+module = ForemanEntityApypieAnsibleModule(
+ argument_spec=dict(name=dict(required=True)))
+```
+
+---
+
+Parameter laden und API Verbindung testen:
+
+```python
+entity_dict = module.clean_params()
+module.connect()
+```
+
+---
+
+Bereits existierendes Objekt finden und es mit den per Parameter übergebenen Daten updaten:
+
+```python
+entity = module.find_resource_by_name('architectures',
+  name=entity_dict['name'], failsafe=True)
+changed = module.ensure_resource_state('architectures',
+  entity_dict, entity, name_map)
+module.exit_json(changed=changed)
+```
+
+Note:
+* `name_map` ist hier noch nicht erklärt
+* `entity_dict` sind die gefilterten User-Angaben
+* `entity` das evtl gefundene Objekt
+
+---
+
+Ansible Parameter in Foreman API Parameter übersetzen:
+
+```python
+name_map = { 'name': 'name' }
+```
 
 ---
 
@@ -235,7 +342,7 @@ module.connect()
 entity = module.find_resource_by_name('architectures',
   name=entity_dict['name'], failsafe=True)
 changed = module.ensure_resource_state('architectures',
-  entity_dict, entity, module.state, name_map)
+  entity_dict, entity, name_map)
 module.exit_json(changed=changed)
 ```
 
@@ -249,7 +356,7 @@ module.exit_json(changed=changed)
 
 <i class="fa fa-twitter" aria-hidden="true"></i> [@zhenech](https://twitter.com/zhenech)
 
-<i class="fa fa-mastodon" aria-hidden="true"></i> [@zhenech@chaos.social](https://chais.social/@zhenech)
+<i class="fa fa-mastodon" aria-hidden="true"></i> [@zhenech@chaos.social](https://chaos.social/@zhenech)
 
 <i class="fa fa-github" aria-hidden="true"></i> [@evgeni](https://github.com/evgeni)
 

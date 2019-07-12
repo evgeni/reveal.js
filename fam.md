@@ -6,7 +6,7 @@
 
 Evgeni Golov
 
-Software Engineer at Red Hat
+Senior Software Engineer at Red Hat
 
 ex-Consultant at Red Hat
 
@@ -124,8 +124,8 @@ Note:
 
 ---
 
-```yaml
-- name: Create CI Organization
+```yaml=
+- name: Create Organization
   foreman:
     username: admin
     password: admin
@@ -137,7 +137,7 @@ Note:
 
 ---
 
-```yaml
+```yaml=
 - name: Enable RHEL Product
   katello:
     username: admin
@@ -195,8 +195,8 @@ Note:
 
 ---
 
-```yaml
-- name: create example.org domain
+```yaml=
+- name: "create example.org domain"
   foreman_domain:
     name: "example.org"
     description: "Example Domain"
@@ -208,7 +208,7 @@ Note:
 
 ---
 
-```yaml
+```yaml=
 - name: "Enable RHEL 7 RPMs repositories"
   katello_repository_set:
     username: "admin"
@@ -227,9 +227,9 @@ Note:
 
 ## Foreman Ansible Modules - Stats
 
-* 41 <span class="emoji">🌟</span> auf GitHub
-* 23 Contributors (7 Red Hat, 7 ATIX)
-* 7 neue Contributors in 2019
+* 42 <span class="emoji">🌟</span> auf GitHub
+* 24 Contributors (8 Red Hat, 7 ATIX)
+* 8 neue Contributors in 2019
 
 ---
 
@@ -239,6 +239,7 @@ Note:
 * almost no new contributors in 2018 (well, 5, but…)
 * none in between February and September
 * Patrick (in September) is a one-time contributor so far
+* yes, the slide only has 23 contributors…
 
 ---
 
@@ -262,8 +263,100 @@ Note:
 
 # Workflow Beispiele
 
-* FIXME: Katello sync+publish+promote
-* FIXME: Katello LCE+CV+AK
+Note:
+* Katello sync+publish+promote
+* Katello LCE+AK
+* Foreman cleanup
+
+---
+
+## Katello sync+publish+promote
+
+```yaml=
+- name: "Sync RHEL repositories"
+  katello_sync:
+    product: "Red Hat Enterprise Linux Server"
+
+- name: "Publish RHEL content view"
+  katello_content_view_version:
+    content_view: "RHEL"
+
+- name: "Promote RHEL content view to Test"
+  katello_content_view_version:
+    content_view: "RHEL"
+    current_lifecycle_environment: "Library"
+    lifecycle_environments:
+      - Test
+```
+
+Note:
+* `organization` fehlt
+* Connection data fehlt
+
+---
+
+## Katello sync+publish+promote
+
+```yaml=
+- name: "Sync RHEL repositories"
+  katello_sync:
+    product: "Red Hat Enterprise Linux Server"
+
+- name: "Publish and promote RHEL content view"
+  katello_content_view_version:
+    content_view: "RHEL"
+    lifecycle_environments:
+      - Library
+      - Test
+```
+
+Note:
+* same as before, just in one step
+
+---
+
+## Katello Lifecycle Environment + Activation Key
+
+```yaml=
+- katello_lifecycle_environment:
+    name: "{{ lifecycle_env }}"
+    prior: "Library"
+
+- name: "Copy Activation Key"
+  katello_activation_key:
+    name: "{{ activation_key }}"
+    new_name: "{{ activation_key }}-{{ lifecycle_env }}"
+    state: 'copied'
+
+- name: "Set Lifecycle Environment for Activation Key"
+  katello_activation_key:
+    name: "{{ activation_key }}-{{ lifecycle_env }}"
+    lifecycle_environment: "{{ lifecycle_env }}"
+```
+
+Note:
+* no name in first step to save space ;-)
+
+---
+
+## Foreman cleanup
+
+```yaml=
+- name: "Clean all media"
+  foreman_installation_medium:
+    name: "*"
+    state: absent
+- name: "Dissociate all Provisioning templates"
+  foreman_provisioning_template:
+    name: "*"
+    organizations: []
+    locations: []
+- name: "Dissociate all Partition Table templates"
+  foreman_ptable:
+    name: "*"
+    organizations: []
+    locations: []
+```
 
 ---
 
@@ -329,7 +422,7 @@ name_map = { 'name': 'name' }
 
 ---
 
-```python
+```python=
 from ansible.module_utils.foreman_helper import
   ForemanEntityApypieAnsibleModule
 

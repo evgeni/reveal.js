@@ -233,7 +233,7 @@ Note:
 
 ---
 
-![new-contributors](https://people.redhat.com/egolov/fam/fam-new-contributors.png =80%x80%)
+<img src="https://people.redhat.com/egolov/fam/fam-new-contributors.png" alt="new contributors" style="width:80%; height:80%"/>
 
 Note:
 * almost no new contributors in 2018 (well, 5, but…)
@@ -243,7 +243,7 @@ Note:
 
 ---
 
-![PR activity](https://people.redhat.com/egolov/fam/fam-pr-activity.png =80%x80%)
+<img src="https://people.redhat.com/egolov/fam/fam-pr-activity.png" alt="PR activity" style="width:80%; height:80%"/>
 
 Note:
 * we made Module writing easy in January/February 2019

@@ -158,9 +158,9 @@ Note:
 
 ---
 
-## `ansible-foreman-modules`
+## `ansible-module-foreman`
 
-* Seit 2015 gibt es auch [`ansible-foreman-modules`](https://github.com/Nosmoht/ansible-module-foreman) von Thomas Krahn ([@Nosmoht](https://github.com/Nosmoht))
+* Seit 2015 gibt es auch [`ansible-module-foreman`](https://github.com/Nosmoht/ansible-module-foreman) von Thomas Krahn ([@Nosmoht](https://github.com/Nosmoht))
 * Gut gepflegt
 * Benutzt eine eigene Bibliothek um mit der API zu sprechen
   * Benutzt nicht Foremans `apidoc.json`
@@ -227,7 +227,7 @@ Note:
 
 ## Foreman Ansible Modules - Stats
 
-* 42 <span class="emoji">🌟</span> auf GitHub
+* 43 <span class="emoji">🌟</span> auf GitHub
 * 24 Contributors (8 Red Hat, 7 ATIX)
 * 8 neue Contributors in 2019
 

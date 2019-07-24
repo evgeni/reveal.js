@@ -144,6 +144,7 @@ module.exit_json(changed=changed)
 ```
 
 Note:
+* resource name is whatever is in the docs
 * `name_map` is still undefined
 * `entity_dict` is the filtered user input
 * `entity` entity the existing entity, or None
@@ -174,6 +175,36 @@ changed = module.ensure_resource_state('architectures',
   entity_dict, entity, name_map)
 module.exit_json(changed=changed)
 ```
+
+---
+
+```python
+if not module.desired_absent:
+  if 'operatingsystems' in entity_dict:
+    entity_dict['operatingsystems'] = 
+      module.find_resources_by_title('operatingsystems',
+        entity_dict['operatingsystems'], thin=True)
+```
+
+Note:
+* boring without optional params
+* here we add a list (!) of OSes to an architecture
+
+---
+
+```python
+if not module.desired_absent:
+  if 'operatingsystems' in entity_dict:
+    search_list = ["title~{}".format(title) for title
+                   in entity_dict['operatingsystems']]
+    entity_dict['operatingsystems'] =
+      module.find_resources('operatingsystems', search_list,
+                            thin=True)
+```
+
+Note:
+* We can also be more flexible in searching
+* OSes sometimes want fuzzy search :/
 
 ---
 

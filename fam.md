@@ -227,9 +227,9 @@ Note:
 
 ## Foreman Ansible Modules - Stats
 
-* 43 <span class="emoji">🌟</span> auf GitHub
-* 24 Contributors (8 Red Hat, 7 ATIX)
-* 8 neue Contributors in 2019
+* 49 <span class="emoji">🌟</span> auf GitHub
+* 25 Contributors (10 Red Hat, 7 ATIX)
+* 9 neue Contributors in 2019
 
 ---
 
@@ -383,8 +383,11 @@ from ansible.module_utils.foreman_helper import
   ForemanEntityApypieAnsibleModule
 
 module = ForemanEntityApypieAnsibleModule(
- argument_spec=dict(name=dict(required=True)))
+ entity_spec=dict(name=dict(required=True)))
 ```
+
+Notes:
+* `entity_spec` is similar but not identical to Ansible's `argument_spec`
 
 ---
 
@@ -402,14 +405,13 @@ Bereits existierendes Objekt finden und es mit den per Parameter übergebenen Da
 ```python
 entity = module.find_resource_by_name('architectures',
   name=entity_dict['name'], failsafe=True)
-changed = module.ensure_resource_state('architectures',
-  entity_dict, entity, name_map)
+changed = module.ensure_entity('architectures',
+  entity_dict, entity)
 module.exit_json(changed=changed)
 ```
 
 Note:
 * resource name is whatever is in the docs
-* `name_map` ist hier noch nicht erklärt
 * `entity_dict` sind die gefilterten User-Angaben
 * `entity` das evtl gefundene Objekt
 
@@ -427,16 +429,15 @@ name_map = { 'name': 'name' }
 from ansible.module_utils.foreman_helper import
   ForemanEntityApypieAnsibleModule
 
-name_map = { 'name': 'name' }
 module = ForemanEntityApypieAnsibleModule(
- argument_spec=dict(name=dict(required=True)))
+ entity_spec=dict(name=dict(required=True)))
 entity_dict = module.clean_params()
 module.connect()
 
 entity = module.find_resource_by_name('architectures',
   name=entity_dict['name'], failsafe=True)
-changed = module.ensure_resource_state('architectures',
-  entity_dict, entity, name_map)
+changed = module.ensure_entity('architectures',
+  entity_dict, entity)
 module.exit_json(changed=changed)
 ```
 
@@ -447,12 +448,12 @@ module.exit_json(changed=changed)
 if not module.desired_absent:
   if 'operatingsystems' in entity_dict:
     entity_dict['operatingsystems'] = 
-      module.find_resources_by_title('operatingsystems',
+      module.find_operatingsystems(
         entity_dict['operatingsystems'], thin=True)
 ```
 
 Note:
-* boring without optional params
+* OSes are special, so we have an own function to finding them
 * here we add a list (!) of OSes to an architecture
 
 ---
@@ -469,7 +470,7 @@ if not module.desired_absent:
 
 Note:
 * We can also be more flexible in searching
-* OSes sometimes want fuzzy search :/
+* This is not required for OSes where we have a function
 
 ---
 

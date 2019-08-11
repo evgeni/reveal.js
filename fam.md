@@ -45,9 +45,12 @@ Debian and Grml Developer
 
 * Plugin für Foreman
 * Content Management (RPM, DEB, Puppet, Containers, Files)
-* Content kann grupiert und gefiltert an Clients ausgeliefert werden
+* Content kann gruppiert und gefiltert an Clients ausgeliefert werden
 * Erlaubt Snapshots von Content zur Versionierung
 * Patch Management
+
+Note:
+* Bald Ansible Collections Support via Pulp3
 
 ---
 
@@ -57,6 +60,9 @@ Debian and Grml Developer
 * bringt eine enorme Zahl an Modulen für unterschiedliche Einsatzzwecke mit
 * kann leicht durch eigene Module erweitert werden
 * lässt sich gut mit REST APIs integrieren
+
+Note:
+* Betonung auf *automation engine*, nicht Configuration Management
 
 ---
 
@@ -98,10 +104,14 @@ Note:
 ### Foreman hat eine API!
 
 * <span class="emoji">😻</span>
-* Daten (Zustand) in einer Datenstruktur (YAML)
+* Daten (Zustand) in einer Datenstruktur (YAML/JSON)
 * Ein API Client übernimmt die Arbeit
 * API Client selber schreiben? Später!
 * Ansible!
+
+Note:
+* API = strukturierte (JSON) Daten rein → Server verarbeitet diese und antwortet
+* Insb kann ich meine Wünsche in json/yaml/toml ausdrücken und ein Tool übersetzt das in das Format was die API erwartet
 
 ---
 
@@ -119,7 +129,7 @@ Note:
 
 Note:
 * `nailgun` ist eigentlich für Satellite geschrieben
-* ersions spezifisch
+* Versions spezifisch
 * hat Probleme mit non-Katello Installationen
 
 ---
@@ -176,6 +186,7 @@ Note:
 ## Foreman Ansible Modules
 
 * Seit Juni 2017
+* Teil der Foreman Organisation (Git, Dokumentation)
 * Versucht `foreman`/`katello` aufzuräumen
 * Zunächst durch Aufsplittung in einzelne Module pro Objekt
 * Dann durch Aufbau eines Frameworks um Module schlank zu halten
@@ -227,7 +238,7 @@ Note:
 
 ## Foreman Ansible Modules - Stats
 
-* 49 <span class="emoji">🌟</span> auf GitHub
+* 50 <span class="emoji">🌟</span> auf GitHub
 * 25 Contributors (10 Red Hat, 7 ATIX)
 * 9 neue Contributors in 2019
 
@@ -264,9 +275,31 @@ Note:
 # Workflow Beispiele
 
 Note:
+* Katello repositories+contentview
 * Katello sync+publish+promote
 * Katello LCE+AK
 * Foreman cleanup
+
+---
+
+## Katello repositories+contentview
+
+```yaml=
+- name: "Enable RHEL repositories"
+  katello_repository_set:
+    name: "Red Hat Enterprise Linux 7 Server (RPMs)"
+    product: "Red Hat Enterprise Linux Server"
+    repositories:
+    - releasever: "7Server"
+      basearch: "x86_64"
+    state: enabled
+- name: "Create RHEL ContentView"
+  katello_content_view:
+    name: "RHEL"
+    repositories:
+      - name: "Red Hat Enterprise Linux 7 Server (RPMs)"
+        product: "Red Hat Enterprise Linux Server"
+```
 
 ---
 
@@ -292,6 +325,7 @@ Note:
 Note:
 * `organization` fehlt
 * Connection data fehlt
+* vor "promote" kann man ein Test Schritt einfuehren
 
 ---
 
@@ -312,6 +346,7 @@ Note:
 
 Note:
 * same as before, just in one step
+* dadurch kein testen vor dem Promote moeglich
 
 ---
 
@@ -386,7 +421,7 @@ module = ForemanEntityApypieAnsibleModule(
  entity_spec=dict(name=dict(required=True)))
 ```
 
-Notes:
+Note:
 * `entity_spec` is similar but not identical to Ansible's `argument_spec`
 
 ---
@@ -422,6 +457,7 @@ Ansible Parameter in Foreman API Parameter übersetzen:
 ```python
 name_map = { 'name': 'name' }
 ```
+FIXME
 
 ---
 
@@ -440,7 +476,6 @@ changed = module.ensure_entity('architectures',
   entity_dict, entity)
 module.exit_json(changed=changed)
 ```
-
 
 ---
 
@@ -471,6 +506,16 @@ if not module.desired_absent:
 Note:
 * We can also be more flexible in searching
 * This is not required for OSes where we have a function
+
+---
+
+# Links
+
+docs: [theforeman.org/plugins/foreman-ansible-modules](https://theforeman.org/plugins/foreman-ansible-modules/)
+
+git: [github.com/theforeman/foreman-ansible-modules](https://github.com/theforeman/foreman-ansible-modules/)
+
+migration: [issue #274](https://github.com/theforeman/foreman-ansible-modules/issues/274)
 
 ---
 

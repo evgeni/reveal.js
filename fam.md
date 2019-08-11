@@ -452,15 +452,6 @@ Note:
 
 ---
 
-Ansible Parameter in Foreman API Parameter übersetzen:
-
-```python
-name_map = { 'name': 'name' }
-```
-FIXME
-
----
-
 ```python=
 from ansible.module_utils.foreman_helper import
   ForemanEntityApypieAnsibleModule
@@ -476,6 +467,24 @@ changed = module.ensure_entity('architectures',
   entity_dict, entity)
 module.exit_json(changed=changed)
 ```
+
+---
+
+Nur der Name der Architektur ist ja langweilig...
+
+```python
+module = ForemanEntityApypieAnsibleModule(
+    entity_spec=dict(
+        name=dict(required=True),
+        operatingsystems=dict(type='entity_list',
+            flat_name='operatingsystem_ids'),
+    ),
+)
+```
+
+Note:
+* eine Architektur kann zu mehreren OS gehoeren
+* `flat_name` uebersetzt in den Foreman API Parameter
 
 ---
 

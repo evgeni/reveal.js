@@ -282,7 +282,7 @@ Note:
 
 ---
 
-## Katello repositories+contentview
+## Katello repository+contentview
 
 ```yaml=
 - name: "Enable RHEL repositories"
